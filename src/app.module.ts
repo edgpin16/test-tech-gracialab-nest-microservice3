@@ -4,6 +4,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
@@ -18,7 +19,7 @@ import { AppService } from './app.service';
       retryDelay: 3000,    
       autoLoadEntities: true,
       synchronize: false, //Ya la estructura SQL esta hecha, solo usaremos el orm para interacciones
-    }), 
+    }), DashboardModule, 
   ],
   controllers: [AppController],
   providers: [AppService],
