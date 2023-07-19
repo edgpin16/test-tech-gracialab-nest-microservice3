@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { ConfigService } from '@nestjs/config';
-import { MailerService } from '@nestjs-modules/mailer';
 import { google } from 'googleapis';
-import { Options } from 'nodemailer/lib/smtp-transport';
+
+import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class MailingService {
   constructor(
-    private readonly configService: ConfigService,
-    private readonly mailerService: MailerService,
   ) {}
   
-  private async setTransport() {
+  public async sendMail(email : string) {
+
     const OAuth2 = google.auth.OAuth2;
     const oauth2Client = new OAuth2(
       process.env.CLIENT_ID,
@@ -32,39 +30,29 @@ export class MailingService {
       });
     });
 
-    const config: Options = {
-      service: 'gmail',
+    const smtpTransport = await nodemailer.createTransport({
+      service: "gmail",
       auth: {
-        type: 'OAuth2',
-        user : process.env.EMAIl,
+        type: "OAuth2",
+        user : process.env.EMAIL,
         clientId : process.env.CLIENT_ID,
         clientSecret : process.env.CLIENT_SECRET,
-        accessToken,
-      },
+        refreshToken: process.env.REFRESH_TOKEN,
+        accessToken
+      }
+    });
+
+    const mailOptions = {
+      from: "noreply@gmail.com",
+      to: email,
+      subject: "Confirmacion de reserva",
+      generateTextFromHTML: true,
+      html: "<h1>Tu reserva ha sido confirmada</h1>"
     };
-    this.mailerService.addTransporter('gmail', config);
+
+    smtpTransport.sendMail(mailOptions, (error, response) => {
+      error ? console.log(error) : console.log(response);
+      smtpTransport.close();
+    });
   }
-
-  public async sendMail(email : string) {
-    await this.setTransport();
-    this.mailerService
-      .sendMail({
-        transporterName: 'gmail',
-        to: email, 
-        from: 'noreply@nestjs.com', // sender address
-        subject: 'Confirmacion de reserva', // Subject line
-        template: 'action',
-        context: {
-          "message" : "Tu reserva ha sido confirmada :D"
-        },
-      })
-      .then((success) => {
-        console.log(success);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }
-
-
 }

@@ -6,7 +6,7 @@ import { DashboardService } from './dashboard.service';
 import { DashboardController } from './dashboard.controller';
 import { User } from './entities/user.entity';
 import { Reservation } from './entities/reservation.entity';
-import { MailingService } from 'src/mailing/mailing.service';
+import { MailingModule } from 'src/mailing/mailing.module';
 
 @Module({
   controllers: [DashboardController],
@@ -17,7 +17,7 @@ import { MailingService } from 'src/mailing/mailing.service';
       secret: process.env.SECRET_JWT || 'THIS IS A SECRET JWT',
       signOptions: {expiresIn: '7200s'}
     }),
-    MailingService
+    MailingModule
   ],
 })
 export class DashboardModule {}

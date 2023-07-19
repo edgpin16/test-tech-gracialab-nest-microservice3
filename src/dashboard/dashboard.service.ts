@@ -178,17 +178,30 @@ export class DashboardService {
       .where(`id = :id`, { id : reservation.id  })
       .execute();
 
-      console.log(reservation);
-
       this.sendEmail(reservation);
 
       return {message : "success"}
   }
 
-  private sendEmail(reservation : Reservation) : void{
+  private async sendEmail(reservation : Reservation){
 
-    const email = reservation?.user?.email;
+    try{
+      const {ID_users} = reservation;
+      const user = await this.userRepository.findOneBy({identificacion_document : ID_users});
 
-    console.log(email);
+      const result = await this.mailingService.sendMail(user.email || "edgardo.pinto16@gmail.com");
+  
+      return {
+        message : "Email enviado con exito",
+        result
+      }
+    }
+    catch(error){
+      console.log(error);
+      return {
+        message : "Error enviando el email",
+        error
+      }
+    }
   }
 }
