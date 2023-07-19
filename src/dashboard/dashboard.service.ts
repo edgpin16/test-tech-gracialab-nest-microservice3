@@ -168,7 +168,7 @@ export class DashboardService {
 
     reservation = {
       ...reservation,
-      //is_confirm : 1 // TRUE
+      is_confirm : 1 // TRUE
     }
 
     await this.reservationRepository
