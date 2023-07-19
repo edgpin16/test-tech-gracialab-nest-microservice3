@@ -15,6 +15,7 @@ import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Reservation } from './entities/reservation.entity';
 import { ConfirmReservationDTO } from './dto/confirm-reservation.dto';
+import { MailingService } from '../mailing/mailing.service';
 
 @Injectable()
 export class DashboardService {
@@ -25,6 +26,8 @@ export class DashboardService {
 
     @InjectRepository(Reservation)
     private readonly reservationRepository: Repository<Reservation>,
+
+    private readonly mailingService : MailingService
   ) { }
 
   async findAll() {
@@ -165,7 +168,7 @@ export class DashboardService {
 
     reservation = {
       ...reservation,
-      is_confirm : 1 // TRUE
+      //is_confirm : 1 // TRUE
     }
 
     await this.reservationRepository
@@ -177,6 +180,15 @@ export class DashboardService {
 
       console.log(reservation);
 
+      this.sendEmail(reservation);
+
       return {message : "success"}
+  }
+
+  private sendEmail(reservation : Reservation) : void{
+
+    const email = reservation?.user?.email;
+
+    console.log(email);
   }
 }
