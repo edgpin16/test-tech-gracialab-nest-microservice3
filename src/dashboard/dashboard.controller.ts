@@ -2,6 +2,7 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode 
 import { DashboardService } from './dashboard.service';
 import { AuthGuard } from './auth.guard';
 import { UpdateUsersReservationDto } from './dto/update-users-reservation.dto';
+import { ConfirmReservationDTO } from './dto/confirm-reservation.dto';
 
 
 @Controller()
@@ -20,5 +21,12 @@ export class DashboardController {
   @Patch('/update')
   update(@Body() updateUsersReservationsDTO : UpdateUsersReservationDto){
     this.dashboardService.update(updateUsersReservationsDTO);
+  }
+
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  @Patch('/confirm-reservation')
+  confirmReservation(@Body() confirmReservationDto : ConfirmReservationDTO){
+    this.dashboardService.confirmReservation(confirmReservationDto);
   }
 }

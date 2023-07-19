@@ -14,6 +14,7 @@ import { UpdateUsersReservationDto } from './dto/update-users-reservation.dto';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
 import { Reservation } from './entities/reservation.entity';
+import { ConfirmReservationDTO } from './dto/confirm-reservation.dto';
 
 @Injectable()
 export class DashboardService {
@@ -149,5 +150,33 @@ export class DashboardService {
       console.log(err);
       return err;
     }
+  }
+
+  async confirmReservation( confirmReservationDto : ConfirmReservationDTO ){
+
+    const {
+      idReservation
+    } = confirmReservationDto;
+
+    let reservation: Reservation = await this.reservationRepository.findOneBy(
+      { id: idReservation });
+
+    if (!reservation) throw new NotFoundException("La reservacion no existe");
+
+    reservation = {
+      ...reservation,
+      is_confirm : 1 // TRUE
+    }
+
+    await this.reservationRepository
+      .createQueryBuilder()
+      .update(Reservation)
+      .set(reservation)
+      .where(`id = :id`, { id : reservation.id  })
+      .execute();
+
+      console.log(reservation);
+
+      return {message : "success"}
   }
 }
