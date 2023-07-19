@@ -1,6 +1,7 @@
 import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, HttpCode } from '@nestjs/common';
 import { DashboardService } from './dashboard.service';
 import { AuthGuard } from './auth.guard';
+import { UpdateUsersReservationDto } from './dto/update-users-reservation.dto';
 
 
 @Controller()
@@ -14,18 +15,10 @@ export class DashboardController {
     return this.dashboardService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.dashboardService.findOne(+id);
+  @UseGuards(AuthGuard)
+  @HttpCode(201)
+  @Patch('/update')
+  update(@Body() updateUsersReservationsDTO : UpdateUsersReservationDto){
+    this.dashboardService.update(updateUsersReservationsDTO);
   }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateDashboardDto: UpdateDashboardDto) {
-  //   return this.dashboardService.update(+id, updateDashboardDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.dashboardService.remove(+id);
-  // }
 }

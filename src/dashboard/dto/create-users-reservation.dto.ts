@@ -83,4 +83,9 @@ export class CreateUsersReservationDto {
     @IsOptional()
     is_confirm?: number;
 
+    @IsNumber()
+    @IsPositive()
+    @IsOptional()
+    idReservation?: number;
+
 }
